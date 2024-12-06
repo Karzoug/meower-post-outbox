@@ -1,0 +1,139 @@
+# Options for analysis running.
+run:
+  # Include test files or not.
+  tests: true
+
+# output configuration options
+output:
+  # colored-line-number|line-number|json|tab|checkstyle, default is "colored-line-number"
+  formats: colored-line-number
+
+  # Print lines of code with issue, default: true
+  print-issued-lines: true
+
+  # Print linter name in the end of issue text, default: true
+  print-linter-name: true
+
+
+# All available settings of specific linters.
+linters-settings:
+  errcheck:
+    # report about not checking of errors in types assetions: `a := b.(MyStruct)`;
+    # default is false: such cases aren't reported by default.
+    check-type-assertions: false
+
+    # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`;
+    # default is false: such cases aren't reported by default.
+    check-blank: false
+  govet:
+    disable:
+      - fieldalignment
+    shadow: true
+  gofmt:
+    # simplify code: gofmt with `-s` option, true by default
+    simplify: true
+  gofumpt:
+    module-path: github.com/Karzoug/meower-post-outbox
+  goimports:
+    # put imports beginning with prefix after 3rd-party packages;
+    # it's a comma-separated list of prefixes
+    local-prefixes: github.com/Karzoug/meower-post-outbox
+  goconst:
+    # minimal length of string constant, 3 by default
+    min-len: 2
+    # minimal occurrences count to trigger, 3 by default
+    min-occurrences: 2
+    ignore-tests: true
+  misspell:
+    # Correct spellings using locale preferences for US or UK.
+    # Default is to use a neutral variety of English.
+    # Setting locale to US will correct the British spelling of 'colour' to 'color'.
+    locale: US
+    ignore-words:
+      - cancelled
+  revive:
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unreachable-code
+  unparam:
+    # Inspect exported functions, default is false. Set to true if no external program/library imports your code.
+    # XXX: if you enable this setting, unparam will report a lot of false-positives in text editors:
+    # if it's called for subdir of a project it can't find external interfaces. All text editor integrations
+    # with golangci-lint call it on a directory with the changed file.
+    check-exported: false
+linters:
+  enable-all: false
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - durationcheck
+    - errcheck 
+    - errname
+    - errorlint
+    - copyloopvar
+    - goconst
+    - gocritic
+    - godot
+    - gofmt
+    - gofumpt
+    - goimports
+    - gomoddirectives
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - nilerr
+    - nilnil
+    - noctx
+    - prealloc
+    - predeclared
+    - promlinter
+    - reassign
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - stylecheck
+    - tagliatelle
+    - tenv
+    - testableexamples
+    - thelper
+    - tparallel
+    - unconvert
+    - unparam
+    - unused
+    - usestdlibvars
+    - wastedassign
+
+issues:
+
+severity:
+  default-severity: error
+  case-sensitive: true
+  rules:
+    - linters:
+        - godot
+      severity: info
