@@ -1,0 +1,11 @@
+version: v2
+clean: true
+plugins:
+  - local: /var/tmp/meower/user/bin/protoc-gen-go
+    out: internal/kafka/gen/
+    opt: paths=source_relative
+inputs:
+  - git_repo: https://github.com/Karzoug/meower-api
+    subdir: proto
+    paths: 
+      - post/v1/kafka.proto
