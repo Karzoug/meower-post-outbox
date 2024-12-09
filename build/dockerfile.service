@@ -1,0 +1,50 @@
+FROM docker.io/golang:1.23-alpine AS build
+
+ENV PATH="/go/bin:${PATH}"
+ENV GO111MODULE=on
+ENV CGO_ENABLED=1
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+ARG PROJECT_PKG="unknown url"
+ARG BUILD_REF=unknown
+ARG BUILD_DATE="an unknown date"
+ARG VERSION=unknown
+ARG SERVICE_NAME="unknown service"
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+RUN apk add -U --no-progress --no-cache gcc musl-dev ca-certificates tzdata
+
+COPY cmd/ ./cmd/
+COPY internal/ ./internal/
+COPY pkg/ ./pkg/
+
+RUN go build -trimpath -tags musl -ldflags="-s -w -extldflags -static \
+-X '${PROJECT_PKG}/pkg/buildinfo.buildVersion=$BUILD_REF' \
+-X '${PROJECT_PKG}/pkg/buildinfo.serviceVersion=$VERSION' \
+-X '${PROJECT_PKG}/pkg/buildinfo.buildDate=$BUILD_DATE' \
+" -o /bin/service cmd/main.go
+
+FROM scratch
+ARG BUILD_DATE
+ARG BUILD_REF
+ARG VERSION
+ARG PROJECT_PKG
+ARG SERVICE_NAME
+
+USER 1001:1001
+
+COPY --from=build --chown=1001 /bin/service /
+
+COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+ENTRYPOINT ["/service"]
+
+LABEL org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.title="${SERVICE_NAME}" \
+      org.opencontainers.image.source="${PROJECT_PKG}" \
+      org.opencontainers.image.revision="${BUILD_REF}" \
+      org.opencontainers.image.version="${VERSION}"
