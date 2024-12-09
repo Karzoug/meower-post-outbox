@@ -24,6 +24,7 @@ type eventProducer struct {
 
 func NewProducer(cfg Config, rec kafkaRecorder, logger zerolog.Logger) (*eventProducer, error) {
 	p, err := kafka.NewProducer(&kafka.ConfigMap{
+		"client.id":                cfg.ClientID,
 		"bootstrap.servers":        cfg.BootstrapServers,
 		"enable.idempotence":       cfg.EnableIdempotence,
 		"allow.auto.create.topics": true,
@@ -97,7 +98,7 @@ func (ep *eventProducer) handleKafkaEvent(e kafka.Event) error {
 				Str("topic", *m.TopicPartition.Topic).
 				Int("partition", int(m.TopicPartition.Partition)).
 				Int64("offset", int64(m.TopicPartition.Offset)).
-				Hex("eventIDHash", entity.HashPostEventID(*postEventIDptr)).
+				Hex("event_id_hash", entity.HashPostEventID(*postEventIDptr)).
 				Msg("message delivered")
 		}
 

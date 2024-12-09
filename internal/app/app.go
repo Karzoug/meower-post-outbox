@@ -36,6 +36,7 @@ func Run(ctx context.Context, logger zerolog.Logger) error {
 	if err != nil {
 		return err
 	}
+	cfg.Kafka.ClientID = serviceName
 	zerolog.SetGlobalLevel(cfg.LogLevel)
 
 	logger.Info().

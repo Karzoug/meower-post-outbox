@@ -134,7 +134,7 @@ func (er postEventsConsumer) Run(ctx context.Context) error {
 
 			er.logger.Info().
 				Str("operation", mongoEvent.Operation).
-				Hex("eventIDHash", entity.HashPostEventID(postEvent.ID)).
+				Hex("event_id_hash", entity.HashPostEventID(postEvent.ID)).
 				Str("postID", postEvent.PostID.String()).
 				Str("authorID", postEvent.AuthorID.String()).
 				Msg("received event")
